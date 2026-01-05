@@ -1,3 +1,5 @@
+
+
 // import { useState } from "react";
 // import LoginImg from "../../assets/loginimg.png";
 // import { Link, useNavigate } from "react-router-dom";
@@ -36,9 +38,9 @@
 
 //   return (
 //     <div className="min-h-screen bg-[#7EC1B1] flex items-center justify-center p-4">
-//       <div className="flex flex-col lg:flex-row bg-white  w-full max-w-6xl overflow-hidden">
+//       <div className="flex flex-col lg:flex-row bg-white  w-full max-w-6xl overflow-hidden">  
 //         {/* rounded-2xl shadow-lg */}
-
+        
 //         {/* Right Side - Login Image */}
 //         <div className="hidden lg:flex flex-1 items-center justify-center bg-[#7EC1B1] order-2 lg:order-none">
 //           <img
@@ -143,6 +145,9 @@
 // };
 
 // export default Login;
+
+
+
 
 // import { useState } from "react";
 // import LoginImg from "../../assets/loginimg.png";
@@ -286,20 +291,29 @@
 
 // export default Login;
 
+
+
+
 import { useState } from "react";
-import LoginImg from "../../assets/loginimg.png";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../../redux/slices/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { ToastContainer, toast } from "react-toastify";
+import LoginImg from "../../assets/loginimg.png";
 import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  
+  // Get loading state from Redux
+  const { loading } = useSelector((state) => state.auth);
 
   const handleLogin = async () => {
     if (!phone.trim()) return toast.error("Phone/Email is required!");
@@ -325,46 +339,49 @@ const Login = () => {
         return;
       }
 
-      localStorage.setItem("engineerToken", data.token);
-      localStorage.setItem("engineerId", data.data._id);
+ localStorage.setItem("engineerToken", data.token);
+localStorage.setItem("engineerId", data.data._id);
 
-      // console.log("Saved Token:", localStorage.getItem("engineerToken"));
-      // console.log("Saved Engineer ID:", localStorage.getItem("engineerId"));
+    // console.log("Saved Token:", localStorage.getItem("engineerToken"));
+    // console.log("Saved Engineer ID:", localStorage.getItem("engineerId"));
+
 
       toast.success(" Login Successful!");
       setTimeout(() => navigate("/dashboard"), 1000);
+
     } catch (error) {
       toast.error(" Server Error! Try again later.");
     }
-
-    setLoading(false);
   };
 
   return (
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={2000}
-        hideProgressBar={true}
-        closeOnClick
-        pauseOnHover
-        style={{
-          fontSize: "18px",
-        }}
-        toastClassName={() =>
-          "min-w-[400px] min-h-[90px] flex items-center justify-center bg-[#EBF2F1] text-red-500 p-4 rounded-lg text-lg shadow-lg"
-        }
-      />
+<ToastContainer
+  position="top-right"
+  autoClose={2000}
+  hideProgressBar={true}
+  closeOnClick
+  pauseOnHover
+  style={{
+    fontSize: "18px", 
+  }}
+  toastClassName={() =>
+    "min-w-[400px] min-h-[90px] flex items-center justify-center bg-[#EBF2F1] text-red-500 p-4 rounded-lg text-lg shadow-lg"
+  }
+/>
 
+
+      
       <div className="min-h-screen bg-[#7EC1B1] flex items-center justify-center p-4">
         <div className="flex flex-col lg:flex-row bg-white w-full max-w-6xl overflow-hidden">
+
           {/* Right Image */}
           <div className="hidden lg:flex flex-1 items-center justify-center bg-[#7EC1B1]">
             <img src={LoginImg} alt="Login" className="w-full max-w-md" />
           </div>
 
           {/* Left Form */}
-
+          
           <div className="flex-1 px-6 md:px-10 py-12 flex flex-col justify-center  items-center rounded-lg ">
             <h2 className="text-2xl md:text-3xl font-semibold text-black mb-2 text-center">
               Welcome to Service Engineer Portal
@@ -374,6 +391,7 @@ const Login = () => {
             </p>
 
             <div className="w-full max-w-md space-y-6">
+
               {/* Phone / Email */}
               <div className="flex flex-col gap-2">
                 <label className="text-lg md:text-xl">Phone / Email</label>
@@ -386,18 +404,13 @@ const Login = () => {
                 />
               </div>
 
-              {/* Password */}
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">
                   <label className="text-lg md:text-xl">Password</label>
-                  <Link
-                    to="/forgetPassword"
-                    className="text-blue-600 text-sm md:text-base hover:underline"
-                  >
+                  <Link to="/forgetPassword" className="text-blue-600 text-sm md:text-base hover:underline">
                     Forgot Password?
                   </Link>
                 </div>
-
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -419,7 +432,6 @@ const Login = () => {
                 </div>
               </div>
 
-              {/* Remember Me */}
               <div className="flex items-center">
                 <label className="flex items-center space-x-2 text-sm md:text-base cursor-pointer">
                   <input
@@ -435,7 +447,6 @@ const Login = () => {
                 <span>Don't have an account?</span> <Link className="text-blue-500 hover:underline hover:text-blue-600 pl-2" to="/register">Register</Link>
               </div>
 
-              {/* Login Button */}
               <button
                 onClick={handleLogin}
                 disabled={loading}

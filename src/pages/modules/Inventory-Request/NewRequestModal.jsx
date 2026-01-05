@@ -1,72 +1,52 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { FiX, FiChevronDown } from "react-icons/fi";
-import { getAvailableItems, getAvailableVendors } from "../../../services/api";
+import { fetchDropdownData } from "../../../redux/slices/inventorySlice";
 
 const priorities = ["low", "medium", "high"];
 
 const NewRequestModal = ({ isOpen, onClose, onSubmit }) => {
-  const [vendor, setVendor] = useState("");
-  const [item, setItem] = useState("");
-  const [quantityRequested, setQuantityRequested] = useState(1);
-  const [reason, setReason] = useState("");
-  const [priority, setPriority] = useState("medium");
+  const dispatch = useDispatch();
+  
+  // 1. Pull dropdown data and loading status from Redux Store
+  const { vendors, availableProducts: items, modalLoading: loading } = useSelector(
+    (state) => state.inventory
+  );
 
-  const [vendors, setVendors] = useState([]);
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    vendor: "",
+    item: "",
+    quantityRequested: 1,
+    reason: "",
+    priority: "medium",
+  });
 
-  // Fetch vendors and items when modal opens
+  // 2. Fetch dropdown data when modal opens
   useEffect(() => {
     if (isOpen) {
-      const fetchData = async () => {
-        setLoading(true);
-        try {
-          const [vendorsData, itemsData] = await Promise.all([
-            getAvailableVendors(),
-            getAvailableItems(),
-          ]);
-          setVendors(Array.isArray(vendorsData) ? vendorsData : []);
-          setItems(Array.isArray(itemsData) ? itemsData : []);
-        } catch (error) {
-          console.error("Error fetching dropdown data:", error);
-
-          // Check if it's vendors endpoint (404) - backend doesn't have this yet
-          if (error.message.includes("vendors")) {
-            alert(
-              "Vendor list endpoint is not available.\n\n" +
-                "Missing: GET /api/engineer/vendor or similar\n\n" +
-                "Please contact backend team to add vendor list endpoint."
-            );
-          } else {
-            alert("Failed to load vendors and items. Please try again.");
-          }
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchData();
+      dispatch(fetchDropdownData());
     }
-  }, [isOpen]);
+  }, [isOpen, dispatch]);
 
   if (!isOpen) return null;
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "quantityRequested" ? Number(value) : value,
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    const { vendor, item, quantityRequested, reason, priority } = formData;
 
-    if (
-      !vendor ||
-      !item ||
-      !quantityRequested ||
-      quantityRequested <= 0 ||
-      !reason
-    ) {
+    if (!vendor || !item || !quantityRequested || quantityRequested <= 0 || !reason) {
       alert("Please fill all required fields");
       return;
     }
 
-    // Payload structure matching the Postman screenshot
-    // Note: Don't send engineer ID - backend will extract it from bearer token
     const payload = {
       vendor,
       item,
@@ -77,22 +57,25 @@ const NewRequestModal = ({ isOpen, onClose, onSubmit }) => {
 
     if (onSubmit) onSubmit(payload);
 
-    // Reset form
-    setVendor("");
-    setItem("");
-    setQuantityRequested(1);
-    setReason("");
-    setPriority("medium");
+    // Reset local state
+    setFormData({
+      vendor: "",
+      item: "",
+      quantityRequested: 1,
+      reason: "",
+      priority: "medium",
+    });
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center font-poppins">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
+      {/* Container matching your exact 747px width */}
       <div className="relative bg-white rounded-2xl shadow-xl w-[747px] max-w-[95%] p-6">
         <button
-          className="absolute top-4 right-4 text-gray-500"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition"
           onClick={onClose}
           aria-label="Close"
         >
@@ -110,19 +93,19 @@ const NewRequestModal = ({ isOpen, onClose, onSubmit }) => {
 
         {loading ? (
           <div className="flex justify-center items-center py-10">
-            <div className="text-gray-500">Loading...</div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7EC1B1]"></div>
+            <div className="ml-3 text-gray-500">Loading details...</div>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-            {/* Vendor */}
+            {/* Vendor Selection */}
             <div className="flex flex-col gap-2">
-              <label className="text-[24px] font-normal text-[#263138]">
-                Vendor *
-              </label>
+              <label className="text-[24px] font-normal text-[#263138]">Vendor *</label>
               <div className="relative flex items-center bg-white border border-gray-400 rounded-[20px] px-4 py-3">
                 <select
-                  value={vendor}
-                  onChange={(e) => setVendor(e.target.value)}
+                  name="vendor"
+                  value={formData.vendor}
+                  onChange={handleChange}
                   className="w-full appearance-none bg-transparent outline-none text-[18px] text-[#606060]"
                 >
                   <option value="">Select Vendor</option>
@@ -136,16 +119,15 @@ const NewRequestModal = ({ isOpen, onClose, onSubmit }) => {
               </div>
             </div>
 
-            {/* Item name + Quantity + Priority row */}
-            <div className="flex gap-6">
+            {/* Item + Quantity + Priority Row */}
+            <div className="flex flex-col md:flex-row gap-6">
               <div className="flex-1 flex flex-col gap-2">
-                <label className="text-[24px] font-normal text-[#263138]">
-                  Item *
-                </label>
+                <label className="text-[24px] font-normal text-[#263138]">Item *</label>
                 <div className="relative flex items-center bg-white border border-gray-400 rounded-[20px] px-4 py-3">
                   <select
-                    value={item}
-                    onChange={(e) => setItem(e.target.value)}
+                    name="item"
+                    value={formData.item}
+                    onChange={handleChange}
                     className="w-full appearance-none bg-transparent outline-none text-[18px] text-[#606060]"
                   >
                     <option value="">Select Item</option>
@@ -159,31 +141,27 @@ const NewRequestModal = ({ isOpen, onClose, onSubmit }) => {
                 </div>
               </div>
 
-              <div className="w-[150px] flex flex-col gap-2">
-                <label className="text-[24px] font-normal text-[#263138]">
-                  Quantity *
-                </label>
+              <div className="w-full md:w-[150px] flex flex-col gap-2">
+                <label className="text-[24px] font-normal text-[#263138]">Quantity *</label>
                 <div className="bg-white border border-gray-400 rounded-[20px] px-4 py-3">
                   <input
                     type="number"
+                    name="quantityRequested"
                     min={1}
-                    value={quantityRequested}
-                    onChange={(e) =>
-                      setQuantityRequested(Number(e.target.value))
-                    }
+                    value={formData.quantityRequested}
+                    onChange={handleChange}
                     className="w-full outline-none text-[18px] text-[#606060]"
                   />
                 </div>
               </div>
 
-              <div className="w-[150px] flex flex-col gap-2">
-                <label className="text-[24px] font-normal text-[#263138]">
-                  Priority *
-                </label>
+              <div className="w-full md:w-[150px] flex flex-col gap-2">
+                <label className="text-[24px] font-normal text-[#263138]">Priority *</label>
                 <div className="relative flex items-center bg-white border border-gray-400 rounded-[20px] px-4 py-3">
                   <select
-                    value={priority}
-                    onChange={(e) => setPriority(e.target.value)}
+                    name="priority"
+                    value={formData.priority}
+                    onChange={handleChange}
                     className="w-full appearance-none bg-transparent outline-none text-[18px] text-[#606060] capitalize"
                   >
                     {priorities.map((p) => (
@@ -197,33 +175,32 @@ const NewRequestModal = ({ isOpen, onClose, onSubmit }) => {
               </div>
             </div>
 
-            {/* Reason */}
+            {/* Reason Textarea */}
             <div className="flex flex-col gap-2">
-              <label className="text-[24px] font-normal text-[#263138]">
-                Reason for Request *
-              </label>
+              <label className="text-[24px] font-normal text-[#263138]">Reason for Request *</label>
               <div className="bg-white border border-gray-400 rounded-[20px] p-4 h-[141px]">
                 <textarea
-                  value={reason}
-                  onChange={(e) => setReason(e.target.value)}
+                  name="reason"
+                  value={formData.reason}
+                  onChange={handleChange}
                   placeholder="Explain why you need this item..."
                   className="w-full h-full resize-none outline-none text-[18px] text-[#606060]"
                 />
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="flex justify-end gap-3">
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-3 mt-2">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-50"
+                className="px-6 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 transition"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-md bg-[#7EC1B1] text-white hover:bg-[#6fb3a3]"
+                className="px-8 py-2 rounded-xl bg-[#7EC1B1] text-white font-semibold hover:bg-[#6fb3a3] transition shadow-md"
               >
                 Submit Request
               </button>

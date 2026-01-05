@@ -5,6 +5,7 @@ import AdminLayout from "./layouts/AdminLayout";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import VerifyOtp from "./pages/auth/VerifyOtp";
 import ResetPassword from "./pages/auth/ResetPassword";
+import SignUp from "./pages/auth/SignUp";
 
 function App() {
   return (
@@ -13,9 +14,12 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Login />} />
+          <Route path="/register" element={<SignUp />} />
           <Route path="/forgetPassword" element={<ForgotPassword />} />
           <Route path="/verify-otp" element={<VerifyOtp />} />
           <Route path="/resetpassword" element={<ResetPassword />} />
+
+
 
 
           {/* User Routes */}

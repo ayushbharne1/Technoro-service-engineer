@@ -1,5 +1,3 @@
-
-
 // import { useState } from "react";
 // import LoginImg from "../../assets/loginimg.png";
 // import { Link, useNavigate } from "react-router-dom";
@@ -38,9 +36,9 @@
 
 //   return (
 //     <div className="min-h-screen bg-[#7EC1B1] flex items-center justify-center p-4">
-//       <div className="flex flex-col lg:flex-row bg-white  w-full max-w-6xl overflow-hidden">  
+//       <div className="flex flex-col lg:flex-row bg-white  w-full max-w-6xl overflow-hidden">
 //         {/* rounded-2xl shadow-lg */}
-        
+
 //         {/* Right Side - Login Image */}
 //         <div className="hidden lg:flex flex-1 items-center justify-center bg-[#7EC1B1] order-2 lg:order-none">
 //           <img
@@ -145,9 +143,6 @@
 // };
 
 // export default Login;
-
-
-
 
 // import { useState } from "react";
 // import LoginImg from "../../assets/loginimg.png";
@@ -291,9 +286,6 @@
 
 // export default Login;
 
-
-
-
 import { useState } from "react";
 import LoginImg from "../../assets/loginimg.png";
 import { Link, useNavigate } from "react-router-dom";
@@ -333,16 +325,14 @@ const Login = () => {
         return;
       }
 
- localStorage.setItem("engineerToken", data.token);
-localStorage.setItem("engineerId", data.data._id);
+      localStorage.setItem("engineerToken", data.token);
+      localStorage.setItem("engineerId", data.data._id);
 
-    // console.log("Saved Token:", localStorage.getItem("engineerToken"));
-    // console.log("Saved Engineer ID:", localStorage.getItem("engineerId"));
-
+      // console.log("Saved Token:", localStorage.getItem("engineerToken"));
+      // console.log("Saved Engineer ID:", localStorage.getItem("engineerId"));
 
       toast.success(" Login Successful!");
       setTimeout(() => navigate("/dashboard"), 1000);
-
     } catch (error) {
       toast.error(" Server Error! Try again later.");
     }
@@ -352,32 +342,29 @@ localStorage.setItem("engineerId", data.data._id);
 
   return (
     <>
-<ToastContainer
-  position="top-right"
-  autoClose={2000}
-  hideProgressBar={true}
-  closeOnClick
-  pauseOnHover
-  style={{
-    fontSize: "18px", 
-  }}
-  toastClassName={() =>
-    "min-w-[400px] min-h-[90px] flex items-center justify-center bg-[#EBF2F1] text-red-500 p-4 rounded-lg text-lg shadow-lg"
-  }
-/>
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={true}
+        closeOnClick
+        pauseOnHover
+        style={{
+          fontSize: "18px",
+        }}
+        toastClassName={() =>
+          "min-w-[400px] min-h-[90px] flex items-center justify-center bg-[#EBF2F1] text-red-500 p-4 rounded-lg text-lg shadow-lg"
+        }
+      />
 
-
-      
       <div className="min-h-screen bg-[#7EC1B1] flex items-center justify-center p-4">
         <div className="flex flex-col lg:flex-row bg-white w-full max-w-6xl overflow-hidden">
-
           {/* Right Image */}
           <div className="hidden lg:flex flex-1 items-center justify-center bg-[#7EC1B1]">
             <img src={LoginImg} alt="Login" className="w-full max-w-md" />
           </div>
 
           {/* Left Form */}
-          
+
           <div className="flex-1 px-6 md:px-10 py-12 flex flex-col justify-center  items-center rounded-lg ">
             <h2 className="text-2xl md:text-3xl font-semibold text-black mb-2 text-center">
               Welcome to Service Engineer Portal
@@ -387,7 +374,6 @@ localStorage.setItem("engineerId", data.data._id);
             </p>
 
             <div className="w-full max-w-md space-y-6">
-
               {/* Phone / Email */}
               <div className="flex flex-col gap-2">
                 <label className="text-lg md:text-xl">Phone / Email</label>
@@ -404,7 +390,10 @@ localStorage.setItem("engineerId", data.data._id);
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">
                   <label className="text-lg md:text-xl">Password</label>
-                  <Link to="/forgetPassword" className="text-blue-600 text-sm md:text-base hover:underline">
+                  <Link
+                    to="/forgetPassword"
+                    className="text-blue-600 text-sm md:text-base hover:underline"
+                  >
                     Forgot Password?
                   </Link>
                 </div>
@@ -421,7 +410,11 @@ localStorage.setItem("engineerId", data.data._id);
                     className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? <AiOutlineEyeInvisible size={24} /> : <AiOutlineEye size={24} />}
+                    {showPassword ? (
+                      <AiOutlineEyeInvisible size={24} />
+                    ) : (
+                      <AiOutlineEye size={24} />
+                    )}
                   </span>
                 </div>
               </div>
@@ -438,6 +431,9 @@ localStorage.setItem("engineerId", data.data._id);
                   <span>Remember Me</span>
                 </label>
               </div>
+              <div className="flex items-center">
+                <span>Don't have an account?</span> <Link className="text-blue-500 hover:underline hover:text-blue-600 pl-2" to="/register">Register</Link>
+              </div>
 
               {/* Login Button */}
               <button
@@ -447,7 +443,6 @@ localStorage.setItem("engineerId", data.data._id);
               >
                 {loading ? "Please Wait..." : "Sign In"}
               </button>
-
             </div>
           </div>
         </div>

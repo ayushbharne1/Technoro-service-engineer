@@ -10,7 +10,6 @@ import Notifications from "../pages/modules/Notifications";
 
 // --- AUTH ---
 import Login from "../pages/auth/Login";
-// import SignUp from "../pages/auth/SignUp";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import VerifyOtp from "../pages/auth/VerifyOtp";
 import ResetPassword from "../pages/auth/ResetPassword";
@@ -22,7 +21,6 @@ import EditProfile from "../pages/modules/Profile/EditProfile";
 
 // --- PRODUCT ---
 import Product from "../pages/modules/productInfo/Product";
-// import AddProduct from "../pages/modules/product/AddProduct";
 import ViewProduct from "../pages/modules/productInfo/ViewProduct";
 
 // --- LEAD MANAGEMENT ---
@@ -33,7 +31,7 @@ import Messages from "../pages/modules/Help&Support/Message";
 import StartNewChat from "../pages/modules/Help&Support/StartNewChat";
 import ChatPage from "../pages/modules/Help&Support/ChatPage";
 
-//COMPLETED LEADS
+// COMPLETED LEADS
 import CompletedLeads from "../pages/modules/CompletedLeads/CompletedLeads";
 import CompletedLeadsView from "../pages/modules/CompletedLeads/CompletedView";
 
@@ -44,6 +42,7 @@ import OngoingView from "../pages/modules/OngoingLeads/OngoingView";
 
 const AdminLayout = () => {
   const [loading, setLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Toggle State
   const location = useLocation();
 
   useEffect(() => {
@@ -51,33 +50,58 @@ const AdminLayout = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Automatically close sidebar on route change for mobile users
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setIsSidebarOpen(false);
+    }
+  }, [location.pathname]);
+
   if (loading) {
     return <LoadingPage />;
   }
 
   // Hide sidebar and header on login and signup
-  const isAuthPage = ["/", "/signup"].includes(location.pathname);
+  const isAuthPage = ["/", "/signup", "/register", "/forgetPassword", "/verify-otp", "/resetpassword"].includes(location.pathname);
+
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
-    <div className="flex h-screen w-full bg-gray-50">
-      {/* Sidebar */}
+    <div className="flex h-screen w-full bg-gray-50 overflow-hidden relative">
+      {/* Sidebar Section */}
       {!isAuthPage && (
-        <div className="hidden md:flex flex-shrink-0">
-          <Sidebar />
-        </div>
+        <>
+          {/* Mobile Overlay */}
+          {isSidebarOpen && (
+            <div 
+              className="fixed inset-0 bg-black/40 z-40 md:hidden" 
+              onClick={toggleSidebar}
+            />
+          )}
+
+          <aside
+            className={`fixed inset-y-0 left-0 z-50 transform ${
+              isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+            } transition-all duration-300 ease-in-out md:relative md:translate-x-0 ${
+              isSidebarOpen ? "md:w-[270px]" : "md:w-0"
+            } flex-shrink-0 bg-white shadow-xl overflow-hidden`}
+          >
+            <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+          </aside>
+        </>
       )}
 
-      <div className="flex flex-col flex-1 h-screen">
-        {/* Header */}
-        {!isAuthPage && <Header />}
+      {/* Main Content Wrapper */}
+      <div className="flex flex-col flex-1 min-w-0 h-screen overflow-hidden">
+        {/* Header Section */}
+        {!isAuthPage && <Header toggleSidebar={toggleSidebar} />}
 
-        {/* Main Content */}
-        <main className="flex-1 overflow-auto hide-scrollbar">
+        {/* Main Content Section */}
+        <main className="flex-1 overflow-auto hide-scrollbar bg-white">
           <ResponsiveLayout>
             <Routes>
               {/* AUTH */}
               <Route path="/" element={<Login />} />
-              {/* <Route path="/signup" element={<SignUp />} /> */}
               <Route path="/forgetPassword" element={<ForgotPassword />} />
               <Route path="/verify-otp" element={<VerifyOtp />} />
               <Route path="/resetpassword" element={<ResetPassword />} />
@@ -85,12 +109,10 @@ const AdminLayout = () => {
               {/* CORE */}
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<Profile />} />
-
               <Route path="/profile/edit-profile" element={<EditProfile />} />
 
               {/* PRODUCT */}
               <Route path="/product" element={<Product />} />
-              {/* <Route path="/product/addproduct" element={<AddProduct />} /> */}
               <Route
                 path="/product/product-details/:productId"
                 element={<ViewProduct />}
@@ -102,28 +124,22 @@ const AdminLayout = () => {
                 path="/lead-management/:leadId"
                 element={<LeadView />}
               />
-          
+              
               <Route path="/inventory-request" element={<InventoryRequest />} />
-
               <Route path="/help-support" element={<Messages />} />
-
               <Route path="/help-support/newchat" element={<StartNewChat />} />
-
               <Route path="/help-support/newchat/chat" element={<ChatPage />} />
-
               <Route path="/notifications" element={<Notifications />} />
 
-
               <Route path="/completed-leads" element={<CompletedLeads />} />
-                    <Route path="/completed-leads/completed-leads-details" element={<CompletedLeadsView/>}/>
+              <Route path="/completed-leads/completed-leads-details" element={<CompletedLeadsView/>}/>
 
-                       {/* ONGOING LEAD */}
+              {/* ONGOING LEAD */}
               <Route path="/ongoing-leads" element={<OngoingLead />} />
               <Route
                 path="/ongoing-leads/view/:leadId"
                 element={<OngoingView />}
               />
-
             </Routes>
           </ResponsiveLayout>
         </main>

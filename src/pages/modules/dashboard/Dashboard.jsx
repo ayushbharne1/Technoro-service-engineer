@@ -1,35 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchDashboardData } from "../../../redux/slices/dashboardSlice";
 import StatsCards from "./StatsCards";
 import IncomeSummary from "./IncomeSummary";
 import TodaysTasks from "./TodaysTasks";
 import NewLeadsTable from "./NewLeadsTable";
-import Header2 from "../../../components/ServiceEngineer/header/Header2";
-import { getDashboardStats } from "../../../services/api";
 
 const Dashboard = () => {
-  const [dashboardData, setDashboardData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const { data: dashboardData, loading, error } = useSelector((state) => state.dashboard);
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setLoading(true);
-        const data = await getDashboardStats();
-        setDashboardData(data);
-        setError(null);
-      } catch (err) {
-        setError(err.message);
-        console.error("Error fetching dashboard data:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    dispatch(fetchDashboardData());
+  }, [dispatch]);
 
-    fetchDashboardData();
-  }, []);
-
-  if (loading) {
+  if (loading && !dashboardData) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-lg">Loading...</div>
@@ -39,32 +24,24 @@ const Dashboard = () => {
 
   if (error) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-screen gap-4">
-        <div className="text-lg text-red-500">Error: {error}</div>
-        <div className="text-sm text-gray-600 max-w-md text-center">
-          The authentication token was not found. This usually means:
-          <ul className="list-disc text-left mt-2 ml-6">
-            <li>You haven't logged in yet</li>
-            <li>Your session has expired</li>
-            <li>The token wasn't saved properly during login</li>
-          </ul>
+      <div className="flex flex-col justify-center items-center min-h-screen gap-4 p-4 text-center">
+        <div className="text-lg text-red-500 font-semibold">Error: {error}</div>
+        <div className="text-sm text-gray-600 max-w-md">
+          Authentication failed. Please check your connection or login again.
         </div>
         <div className="flex gap-4">
           <button
             onClick={() => (window.location.href = "/login")}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
           >
             Go to Login
           </button>
           <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            onClick={() => dispatch(fetchDashboardData())}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
           >
             Retry
           </button>
-        </div>
-        <div className="text-xs text-gray-500 mt-4">
-          Press F12 to open console and check the debug logs
         </div>
       </div>
     );

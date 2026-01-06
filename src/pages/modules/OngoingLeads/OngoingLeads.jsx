@@ -10,17 +10,20 @@ const OngoingLeads = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   
-  // 1. Get data from Redux Store
+  // Get data from Redux Store
   const { data, loading, error } = useSelector((state) => state.leads);
 
   const [entries, setEntries] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
 
-  // 2. Fetch leads on mount if not already loaded
+  // FIX: Stable dependency array. 
+  // We use data?.length to ensure the "size" of the dependency doesn't 
+  // confuse React's diffing engine.
   useEffect(() => {
-    dispatch(fetchLeads());
-  }, [dispatch]);
+    if (!data || data.length === 0) {
+      dispatch(fetchLeads());
+    }
+  }, [dispatch]); // Only dispatch is strictly needed here if you want to fetch once on mount
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
@@ -31,18 +34,13 @@ const OngoingLeads = () => {
     }
   };
 
-  // 3. Filter data from Redux state
-  // We filter for "Ongoing" leads specifically for this page
-  const ongoingLeadsData = data.filter((lead) => 
-    lead.status === "Ongoing" || lead.status === "Ongoing"
-  );
-
-  const filteredData = ongoingLeadsData.filter((item) => {
-    const matchesStatus = statusFilter === "All" || item.status === statusFilter;
+  // Filter logic remains the same, but using safe navigation ?.
+  const filteredData = (data || []).filter((item) => {
+    const isOngoing = item.status?.toLowerCase() === "ongoing";
     const matchesSearch =
       item.leadId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.customerName?.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesStatus && matchesSearch;
+    return isOngoing && matchesSearch;
   });
 
   if (loading) return <p className="text-center py-10 font-poppins">Loading ongoing leads...</p>;
@@ -78,64 +76,48 @@ const OngoingLeads = () => {
             className="border border-gray-300 rounded-lg px-4 py-2 pl-10 w-full focus:ring-2 focus:ring-[#7EC1B1] outline-none"
           />
         </div>
-
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="border border-gray-300 rounded-lg px-4 py-2 outline-none"
-        >
-          <option value="All">All Statuses</option>
-          <option value="Ongoing">Ongoing</option>
-        </select>
       </div>
 
-      {/* Table Section */}
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
         <div className="overflow-x-auto">
-          <table className="w-full border border-gray-200">
+          <table className="w-full">
             <thead className="bg-gray-100 border-b border-gray-300 hidden md:table-header-group">
               <tr>
                 <th className="px-6 py-3 text-left text-gray-700 font-semibold">Sr.No.</th>
                 <th className="px-6 py-3 text-left text-gray-700 font-semibold">Lead ID</th>
                 <th className="px-6 py-3 text-left text-gray-700 font-semibold">Customer Name</th>
                 <th className="px-6 py-3 text-left text-gray-700 font-semibold">Service Type</th>
-                <th className="px-6 py-3 text-left text-gray-700 font-semibold">Product Model</th>
-                <th className="px-6 py-3 text-left text-gray-700 font-semibold">Order Date</th>
+                <th className="px-6 py-3 text-left text-gray-700 font-semibold">Date</th>
                 <th className="px-6 py-3 text-left text-gray-700 font-semibold">Status</th>
                 <th className="px-6 py-3 text-left text-gray-700 font-semibold">Action</th>
               </tr>
             </thead>
-
-            <tbody>
-              {filteredData.length > 0 ? (
-                filteredData.slice(0, entries).map((lead, index) => (
-                  <tr key={lead._id} className="border-t hover:bg-gray-50 block md:table-row mb-4 md:mb-0 rounded-lg shadow-sm md:shadow-none transition-colors">
-                    <td className="px-6 py-3 block md:table-cell before:content-['Sr.No.:_'] before:font-bold md:before:content-none">{index + 1}</td>
-                    <td className="px-6 py-3 block md:table-cell before:content-['Lead_ID:_'] before:font-bold md:before:content-none font-medium">{lead.leadId}</td>
-                    <td className="px-6 py-3 block md:table-cell before:content-['Customer:_'] before:font-bold md:before:content-none">{lead.customerName}</td>
-                    <td className="px-6 py-3 block md:table-cell before:content-['Service:_'] before:font-bold md:before:content-none">{lead.serviceType}</td>
-                    <td className="px-6 py-3 block md:table-cell before:content-['Product:_'] before:font-bold md:before:content-none">{lead.productModel}</td>
-                    <td className="px-6 py-3 block md:table-cell before:content-['Date:_'] before:font-bold md:before:content-none">{lead.orderDate}</td>
-                    <td className={`px-6 py-3 block md:table-cell before:content-['Status:_'] before:font-bold md:before:content-none font-semibold ${getStatusColor(lead.status)}`}>
-                      {lead.status}
-                    </td>
-                    <td className="px-6 py-3 block md:table-cell">
-                      <button
-                        onClick={() => navigate(`/ongoing-leads/view/${lead.leadId}`, { state: { lead } })}
-                        className="text-blue-500 hover:text-blue-700"
-                      >
-                        <GoEye className="w-5 h-5" />
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="8" className="text-center py-10 text-gray-500">No ongoing leads found.</td>
+            <tbody className="divide-y divide-gray-200">
+              {filteredData.slice(0, entries).map((lead, index) => (
+                <tr key={lead.id || lead.leadId || index} className="hover:bg-gray-50 block md:table-row transition-colors">
+                  <td className="px-6 py-4 block md:table-cell before:content-['Sr.No.:_'] before:font-bold md:before:content-none">{index + 1}</td>
+                  <td className="px-6 py-4 block md:table-cell before:content-['Lead_ID:_'] before:font-bold md:before:content-none font-medium">{lead.leadId}</td>
+                  <td className="px-6 py-4 block md:table-cell before:content-['Customer:_'] before:font-bold md:before:content-none">{lead.customerName}</td>
+                  <td className="px-6 py-4 block md:table-cell before:content-['Service:_'] before:font-bold md:before:content-none">{lead.serviceType}</td>
+                  <td className="px-6 py-4 block md:table-cell before:content-['Date:_'] before:font-bold md:before:content-none">{lead.orderDate}</td>
+                  <td className={`px-6 py-4 block md:table-cell before:content-['Status:_'] before:font-bold md:before:content-none font-semibold ${getStatusColor(lead.status)}`}>
+                    {lead.status}
+                  </td>
+                  <td className="px-6 py-4 block md:table-cell">
+                    <button
+                      onClick={() => navigate(`/ongoing-leads/view/${lead.leadId}`, { state: { lead } })}
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      <GoEye className="w-5 h-5" />
+                    </button>
+                  </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
+          {filteredData.length === 0 && (
+            <div className="text-center py-10 text-gray-500">No ongoing leads found.</div>
+          )}
         </div>
       </div>
     </div>

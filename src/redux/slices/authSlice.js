@@ -1,8 +1,31 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 // --- Async Thunks ---
+
+export const sendEngineerOtp = createAsyncThunk('engineer/sendOtp', async (phone, { rejectWithValue }) => {
+    try {
+        const response = await axios.post(`${API_URL}/api/engineer/register/send-otp`, { phone });
+        return response.data;
+    } catch (err) { return rejectWithValue(err.response.data.message); }
+});
+
+export const verifyEngineerOtp = createAsyncThunk('engineer/verifyOtp', async (data, { rejectWithValue }) => {
+    try {
+        const response = await axios.post(`${API_URL}/api/engineer/register/verify-otp`, data);
+        return response.data;
+    } catch (err) { return rejectWithValue(err.response.data.message); }
+});
+
+export const registerEngineer = createAsyncThunk('engineer/register', async (payload, { rejectWithValue }) => {
+    try {
+        const response = await axios.post(`${API_URL}/api/engineer/register`, payload);
+        return response.data;
+    } catch (err) { return rejectWithValue(err.response.data.message); }
+});
+
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",

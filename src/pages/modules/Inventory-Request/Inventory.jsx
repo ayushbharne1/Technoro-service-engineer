@@ -107,9 +107,9 @@ const Inventory = () => {
   if (loading && all.length === 0) return <div className="text-center py-20">Loading...</div>;
 
   return (
-    <div className="w-full min-h-screen py-6 font-poppins">
+    <div className="w-full min-h-screen rounded-lg bg-gray-100 pt-2 font-poppins">
       <ToastContainer position="top-right" autoClose={2000} />
-      <div className="w-full mx-auto mb-4 bg-white rounded-lg border border-gray-100 p-6">
+      <div className="w-full mx-auto mb-4  rounded-lg border border-gray-100 p-6">
         
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 mb-2">

@@ -255,8 +255,9 @@ const Messages = () => {
   };
 
   return (
-    <div className="bg-white p-4 h-full overflow-y-auto flex flex-col gap-6 font-poppins">
+    <div className="bg-gray-100 rounded-lg p-6 h-full overflow-y-auto flex flex-col gap-6 font-poppins">
       <Header2 title="Messages" />
+
 
       {/* 🔹 Top Controls */}
       <div className="bg-white p-4 sm:p-6 rounded-lg shadow flex flex-col sm:flex-row items-center justify-between gap-10 flex-wrap">

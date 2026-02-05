@@ -58,7 +58,7 @@ const CompletedLeads = () => {
     if (error) return <div className="p-10 text-center text-red-500">{error}</div>;
 
     return (
-        <div className="bg-gray-100 p-4 h-full overflow-y-auto flex flex-col gap-6 font-poppins">
+        <div className="bg-gray-100 p-6 h-full rounded-lg overflow-y-auto flex flex-col gap-6 font-poppins">
             <Header2 title="Lead Management" />
 
             <div className="bg-white p-3 sm:p-6 rounded-lg shadow flex flex-col gap-6">

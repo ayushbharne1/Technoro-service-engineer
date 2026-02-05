@@ -47,7 +47,7 @@ const OngoingLeads = () => {
   if (error) return <p className="text-center text-red-500 py-10 font-poppins">{error}</p>;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 font-poppins">
+    <div className="min-h-screen bg-gray-100 rounded-lg p-6 font-poppins">
       <Header2 title="Ongoing Leads" />
 
       {/* Controls Bar */}

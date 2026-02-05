@@ -34,7 +34,7 @@ const Product = () => {
   };
 
   return (
-    <div className="bg-white p-3 sm:p-8 font-sans min-h-screen">
+    <div className="bg-gray-100 p-6 rounded-lg sm:p-8 font-sans min-h-screen">
       <div className="max-w-full mx-auto">
         <Header2 />
 

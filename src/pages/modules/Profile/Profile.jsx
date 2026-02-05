@@ -61,8 +61,10 @@ const Profile = () => {
   if (!data) return null;
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 sm:p-10 w-full mx-auto relative font-poppins">
-      <Header2 />
+    <div className="bg-gray-100 shadow-md rounded-lg p-6 sm:p-10 w-full mx-auto relative font-poppins">
+       <div className="mb-8">
+        <Header2 />
+      </div>
       
       <div className="flex flex-col md:flex-row justify-between items-center gap-5 mt-6">
         <div className="flex items-center gap-5">

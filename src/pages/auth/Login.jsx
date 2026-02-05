@@ -35,7 +35,7 @@ const Login = () => {
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={2000} hideProgressBar={true} />
+      <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} />
       <div className="min-h-screen bg-[#7EC1B1] flex items-center justify-center p-4">
         <div className="flex flex-col lg:flex-row bg-white w-full max-w-6xl overflow-hidden rounded-lg">
           {/* Right Image */}

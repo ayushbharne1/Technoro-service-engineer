@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { verifyOtp, sendOtp } from "../../redux/slices/authSlice"; // Import sendOtp for resend logic
 import verificationImage from "../../assets/Verify-OTP.png";
 import { ToastContainer, toast } from "react-toastify";
-
+import "react-toastify/dist/ReactToastify.css";
 export default function VerifyOtp() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(60);
@@ -38,6 +38,8 @@ export default function VerifyOtp() {
       const newOtp = [...otp];
       newOtp[index] = value;
       setOtp(newOtp);
+      console.log(newOtp)
+
       if (value !== "" && index < 5) inputRefs.current[index + 1].focus();
     }
   };

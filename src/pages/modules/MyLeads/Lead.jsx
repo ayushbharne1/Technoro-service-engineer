@@ -47,7 +47,7 @@ const LeadManagement = () => {
   if (error) return <div className="p-10 text-center text-red-500 font-bold">Error: {error}</div>;
 
   return (
-    <div className="bg-gray-100 p-4 h-full flex flex-col gap-6 font-[Poppins]">
+    <div className="bg-gray-100 p-6 h-full rounded-lg flex flex-col gap-6 font-[Poppins]">
       <Header2 title="Lead Management" />
 
       <div className="bg-white p-4 sm:p-6 rounded-lg shadow flex flex-col gap-6">

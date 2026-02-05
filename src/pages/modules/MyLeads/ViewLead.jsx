@@ -65,7 +65,7 @@ const LeadView = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col p-4 sm:p-6 gap-6 font-poppins">
+    <div className="bg-gray-100 min-h-screen rounded-lg flex flex-col p-4 sm:p-6 gap-6 font-poppins">
       <Header2 />
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
 

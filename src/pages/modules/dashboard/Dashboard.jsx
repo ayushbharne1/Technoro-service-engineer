@@ -5,6 +5,7 @@ import StatsCards from "./StatsCards";
 import IncomeSummary from "./IncomeSummary";
 import TodaysTasks from "./TodaysTasks";
 import NewLeadsTable from "./NewLeadsTable";
+import Header2 from "../../../components/ServiceEngineer/header/Header2";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -48,7 +49,8 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="flex flex-col bg-white p-4 sm:p-6 gap-y-6 sm:gap-y-8 min-h-screen font-sans text-base">
+    <div className="flex flex-col rounded-lg bg-gray-100 p-4 sm:p-6 gap-y-6 sm:gap-y-8 min-h-screen font-sans text-base">
+      <Header2 title="Dashboard" />
       <StatsCards data={dashboardData} />
 
       <div className="w-full flex flex-col lg:flex-row gap-6">

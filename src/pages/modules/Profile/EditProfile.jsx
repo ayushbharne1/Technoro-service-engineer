@@ -25,10 +25,10 @@
 //   };
 
 //   return (
-    // <div className="bg-white shadow-md rounded-lg p-6 sm:p-10 mt-6 w-full mx-auto">
-    // <Header2/>
+// <div className="bg-white shadow-md rounded-lg p-6 sm:p-10 mt-6 w-full mx-auto">
+// <Header2/>
 
-    //   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 //         <div>
 //           <label className="block text-gray-700 font-semibold mb-2">
 //             Full Name
@@ -112,8 +112,6 @@
 
 // export default EditProfile;
 
-
-
 // import { useLocation, useNavigate } from "react-router-dom";
 // import { useState } from "react";
 
@@ -126,7 +124,7 @@
 //     skills: state?.skills?.[0] || "", // Single select dropdown
 //     phone: state?.phone || "",
 //     assignedArea: state?.assignedArea || "",
-//     password: "******", 
+//     password: "******",
 //   });
 
 //   const API_BASE = import.meta.env.VITE_API_URL;
@@ -140,7 +138,7 @@
 //     const updatedData = {
 //       name: formData.name,
 //       assignedArea: formData.assignedArea,
-//       skills: [formData.skills], 
+//       skills: [formData.skills],
 //       ...(formData.password !== "******" && { password: formData.password }),
 //     };
 
@@ -178,7 +176,7 @@
 //   return (
 //     <div className="bg-white shadow-md rounded-lg p-6 sm:p-10 mt-6 w-full mx-auto">
 //       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
+
 //         {/* Full Name */}
 //         <div>
 //           <label className="block text-gray-700 font-semibold mb-2">
@@ -268,10 +266,9 @@
 
 // export default EditProfile;
 
-
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Header2 from "../../../components/ServiceEngineer/header/Header2"
+import Header2 from "../../../components/ServiceEngineer/header/Header2";
 
 const EditProfile = () => {
   const navigate = useNavigate();
@@ -287,53 +284,52 @@ const EditProfile = () => {
   });
 
   // ✅ Fetch Profile on Page Load & Autofill
- useEffect(() => {
-  const fetchProfile = async () => {
-    try {
-      const engineerId = localStorage.getItem("engineerId");
-      const token = localStorage.getItem("engineerToken");
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const engineerId = localStorage.getItem("engineerId");
+        const token = localStorage.getItem("engineerToken");
 
-      if (!engineerId || !token) {
-        console.error("Missing ID or Token");
+        if (!engineerId || !token) {
+          console.error("Missing ID or Token");
+          setLoading(false);
+          return;
+        }
+
+        const res = await fetch(`${API_BASE}/api/engineer/profile`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch profile");
+        }
+
+        const result = await res.json();
+        const data = result.data;
+
+        setFormData({
+          name: data.name || "",
+          skills: data.skills?.join(", ") || "",
+          phone: data.phone || "",
+          assignedArea: data.assignedArea || "",
+          password: "******",
+        });
+
         setLoading(false);
-        return;
+      } catch (error) {
+        console.error("Fetch error:", error);
+        setLoading(false);
       }
+    };
 
-      const res = await fetch(`${API_BASE}/api/engineer/profile`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    fetchProfile();
+  }, []);
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch profile");
-      }
-
-      const result = await res.json();
-      const data = result.data;
-
-      setFormData({
-        name: data.name || "",
-        skills: data.skills?.join(", ") || "",
-        phone: data.phone || "",
-        assignedArea: data.assignedArea || "",
-        password: "******",
-      });
-
-      setLoading(false);
-    } catch (error) {
-      console.error("Fetch error:", error);
-      setLoading(false);
-    }
-  };
-
-  fetchProfile();
-}, []);
-
-
-const handleChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -347,7 +343,6 @@ const handleChange = (e) => {
   //   alert("Not Logged In - Missing Token or ID");
   //   return;
   // }
-    
 
   //   const updatedData = {
   //     name: formData.name,
@@ -382,69 +377,66 @@ const handleChange = (e) => {
   //   }
   // };
 
-
   const handleSave = async () => {
-  const token = localStorage.getItem("engineerToken");
+    const token = localStorage.getItem("engineerToken");
 
-  if (!token) {
-    alert("Not Logged In - Missing Token");
-    return;
-  }
-
-
-  const updatedData = {};
-
-  // ✅ Only send changed fields
-  if (formData.name.trim()) updatedData.name = formData.name.trim();
-  if (formData.phone.trim()) updatedData.phone = formData.phone.trim();
-  if (formData.assignedArea.trim()) updatedData.assignedArea = formData.assignedArea.trim();
-  if (formData.skills.trim())
-    updatedData.skills = formData.skills.split(",").map((s) => s.trim());
-
-  try {
-          const token = localStorage.getItem("engineerToken");
-
-    const response = await fetch(`${API_BASE}/api/engineer/update`, {
-      
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(updatedData),
-    });
-
-    const result = await response.json();
-    console.log("Update Response:", result);
-
-    if (!response.ok) {
-      alert(result.message || "Failed to update");
+    if (!token) {
+      alert("Not Logged In - Missing Token");
       return;
     }
 
-    alert("Profile updated successfully!");
-    navigate("/profile", { state: { updated: true } });
-  } catch (err) {
-    console.error("Update Error:", err);
-    alert("Something went wrong!");
-  }
-};
+    const updatedData = {};
 
+    // ✅ Only send changed fields
+    if (formData.name.trim()) updatedData.name = formData.name.trim();
+    if (formData.phone.trim()) updatedData.phone = formData.phone.trim();
+    if (formData.assignedArea.trim())
+      updatedData.assignedArea = formData.assignedArea.trim();
+    if (formData.skills.trim())
+      updatedData.skills = formData.skills.split(",").map((s) => s.trim());
+
+    try {
+      const token = localStorage.getItem("engineerToken");
+
+      const response = await fetch(`${API_BASE}/api/engineer/update`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      const result = await response.json();
+      console.log("Update Response:", result);
+
+      if (!response.ok) {
+        alert(result.message || "Failed to update");
+        return;
+      }
+
+      alert("Profile updated successfully!");
+      navigate("/profile", { state: { updated: true } });
+    } catch (err) {
+      console.error("Update Error:", err);
+      alert("Something went wrong!");
+    }
+  };
 
   if (loading) return <p>Loading Profile...</p>;
 
   return (
-     <div className="bg-white shadow-md rounded-lg p-6 sm:p-10 mt-6 w-full mx-auto">
-       <div className="mb-8">
-    <Header2 />
-  </div>
-
+    <div className="bg-gray-100 shadow-md rounded-lg p-6 sm:p-10 w-full mx-auto">
+      <div className="mb-8">
+        <Header2 />
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
         {/* Name */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Full Name</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Full Name
+          </label>
           <input
             type="text"
             name="name"
@@ -457,7 +449,7 @@ const handleChange = (e) => {
         {/* Skills */}
         <div>
           <label className="block text-gray-700 font-semibold mb-2">
-         Select Skills 
+            Select Skills
           </label>
           <input
             type="text"
@@ -470,7 +462,9 @@ const handleChange = (e) => {
 
         {/* Phone Editable */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Phone No.</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Phone No.
+          </label>
           <input
             type="text"
             name="phone"
@@ -482,7 +476,9 @@ const handleChange = (e) => {
 
         {/* Assigned Area */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Assigned Area</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Assigned Area
+          </label>
           <input
             type="text"
             name="assignedArea"
@@ -494,7 +490,9 @@ const handleChange = (e) => {
 
         {/* Password Not Editable */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Password</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Password
+          </label>
           <input
             type="password"
             value={formData.password}

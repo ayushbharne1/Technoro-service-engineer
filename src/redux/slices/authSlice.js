@@ -113,6 +113,7 @@ const authSlice = createSlice({
     engineerId: localStorage.getItem("engineerId") || null,
     loading: false,
     error: null,
+    otpResponse: null,
   },
   reducers: {
     logout: (state) => {
@@ -120,6 +121,9 @@ const authSlice = createSlice({
       localStorage.removeItem("engineerId");
       state.token = null;
       state.engineerId = null;
+    },
+    clearOtpResponse: (state) => {
+      state.otpResponse = null; // OTP dikhane ke baad clear karne ke liye
     },
     clearError: (state) => {
       state.error = null;
@@ -133,8 +137,9 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.engineerId = action.payload.data._id;
       })
-      .addCase(sendOtp.fulfilled, (state) => {
+      .addCase(sendOtp.fulfilled, (state,action) => {
         state.loading = false;
+        state.otpResponse = action.payload;
       })
       .addCase(verifyOtp.fulfilled, (state) => {
         state.loading = false;
@@ -161,5 +166,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { logout, clearError,clearOtpResponse } = authSlice.actions;
 export default authSlice.reducer;

@@ -24,14 +24,16 @@ const ForgotPassword = () => {
     const resultAction = await dispatch(sendOtp(phone.trim()));
 
     if (sendOtp.fulfilled.match(resultAction)) {
-      toast.success("OTP sent successfully!");
+      // toast.success("OTP sent successfully!");
       setTimeout(() => navigate("/verify-otp"), 1000);
     } else {
       toast.error(resultAction.payload || "Failed to send OTP");
     }
   };
 
-  return (
+
+
+return (
     <>
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar={true} />
       <div className="min-h-screen bg-[#7EC1B1] flex items-center justify-center p-6">

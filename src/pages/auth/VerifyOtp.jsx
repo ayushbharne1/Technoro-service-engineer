@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { verifyOtp, sendOtp } from "../../redux/slices/authSlice"; // Import sendOtp for resend logic
+import { verifyOtp, sendOtp, clearOtpResponse } from "../../redux/slices/authSlice"; 
 import verificationImage from "../../assets/Verify-OTP.png";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 export default function VerifyOtp() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(60);
@@ -12,13 +13,30 @@ export default function VerifyOtp() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { loading } = useSelector((state) => state.auth);
+  // Redux se loading aur otpResponse (jo Forgot Password se aaya hai) nikaalein
+  const { loading, otpResponse } = useSelector((state) => state.auth);
   const phone = localStorage.getItem("resetPhone");
+
+  // --- NEW: OTP Toast logic ---
+  useEffect(() => {
+    // Agar otpResponse mein data hai (jo slice se save hua tha)
+    if (otpResponse && otpResponse.otp) {
+      toast.success(`Your OTP is: ${otpResponse.otp}`, {
+        autoClose: 10000, // 10 second tak dikhayega taaki user note kar sake
+        position: "top-right"
+      });
+      
+      // Toast dikhane ke baad state ko clear kar dein taaki page refresh pe dobara na aaye
+      if (clearOtpResponse) {
+        dispatch(clearOtpResponse());
+      }
+    }
+  }, [otpResponse, dispatch]);
+  // ----------------------------
 
   useEffect(() => {
     if (inputRefs.current[0]) inputRefs.current[0].focus();
     
-    // Restore timer logic
     const savedTime = localStorage.getItem("otpNextTime");
     if (savedTime) {
       const diff = Math.floor((parseInt(savedTime) - Date.now()) / 1000);
@@ -38,7 +56,6 @@ export default function VerifyOtp() {
       const newOtp = [...otp];
       newOtp[index] = value;
       setOtp(newOtp);
-      console.log(newOtp)
 
       if (value !== "" && index < 5) inputRefs.current[index + 1].focus();
     }
@@ -73,7 +90,10 @@ export default function VerifyOtp() {
     
     const resultAction = await dispatch(sendOtp(phone));
     if (sendOtp.fulfilled.match(resultAction)) {
-      toast.success("OTP Resent!");
+      // Resend hone par bhi toast mein OTP dikhayein
+      const newOtpVal = resultAction.payload?.otp;
+      toast.success(newOtpVal ? `New OTP Sent: ${newOtpVal}` : "OTP Resent!");
+      
       setTimer(60);
       localStorage.setItem("otpNextTime", Date.now() + 60000);
     } else {
@@ -85,12 +105,10 @@ export default function VerifyOtp() {
     <main className="min-h-screen bg-[#7EC1B1] flex items-center justify-center p-6">
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
       <div className="flex flex-col lg:flex-row w-full max-w-7xl overflow-hidden bg-white rounded-xl shadow-lg">
-        {/* Left Side Illustration */}
         <div className="hidden lg:flex flex-1 bg-[#7EC1B1] items-center justify-center p-12">
           <img src={verificationImage} alt="OTP Verification" className="w-full h-full max-w-xl object-contain" />
         </div>
 
-        {/* Right Side Form */}
         <div className="flex-1 flex flex-col justify-center px-12 py-16 lg:py-24">
           <div className="max-w-md w-full mx-auto text-center">
             <h1 className="text-3xl md:text-4xl font-bold text-[#263138] mb-6">Verify OTP</h1>

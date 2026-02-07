@@ -22,13 +22,14 @@ const Login = () => {
   const handleLogin = async () => {
     if (!phone.trim()) return toast.error("Phone/Email is required!");
     if (!password.trim()) return toast.error("Password is required!");
-
+    console.log("Login Payload:", { phone, password });
     const resultAction = await dispatch(loginUser({ phone, password }));
 
     if (loginUser.fulfilled.match(resultAction)) {
       toast.success("Login Successful!");
       setTimeout(() => navigate("/dashboard"), 1000);
     } else {
+       console.log("Login Error:", resultAction.payload);
       toast.error(resultAction.payload || "Login Failed");
     }
   };
@@ -54,9 +55,9 @@ const Login = () => {
 
             <div className="w-full max-w-md space-y-6">
               <div className="flex flex-col gap-2">
-                <label className="text-lg md:text-xl">Phone / Email</label>
+                <label className="text-lg md:text-xl">Phone</label>
                 <input
-                  type="text"
+                  type="number"
                   placeholder="Enter Phone or Email"
                   className="h-14 md:h-16 border text-black rounded-lg p-3"
                   value={phone}

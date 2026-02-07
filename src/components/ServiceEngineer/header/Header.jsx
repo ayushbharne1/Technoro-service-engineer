@@ -1,15 +1,26 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { LuBell, LuMenu } from "react-icons/lu"; // Added LuMenu for toggle
+import { useSelector, useDispatch } from "react-redux"; // Add these imports
+import { LuBell, LuMenu } from "react-icons/lu";
 import { IoIosArrowDown } from "react-icons/io";
 import user from "../../../assets/user.png";
 import { getNotifications } from "../../../services/api";
-
+import { fetchDashboardData } from "../../../redux/slices/dashboardSlice";
 const Header = ({ toggleSidebar }) => {
   const [notificationCount, setNotificationCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const dropdownRef = useRef(null);
+
+  // Get engineer data from Redux store
+  const { data: dashboardData } = useSelector((state) => state.dashboard);
+  const engineerName = dashboardData?.engineer?.name || "User";
+
+  // Fetch dashboard data on component mount
+  useEffect(() => {
+    dispatch(fetchDashboardData());
+  }, [dispatch]);
 
   // Handle outside click for dropdown
   useEffect(() => {
@@ -57,6 +68,7 @@ const Header = ({ toggleSidebar }) => {
         >
           <LuMenu size={28} />
         </button>
+        <span className="text-xl">Service Engineer Panel</span>
       </div>
 
       {/* 2. RIGHT SIDE: Notifications and Profile */}
@@ -90,7 +102,7 @@ const Header = ({ toggleSidebar }) => {
           />
           
           <div className="ml-2 hidden sm:block">
-            <p className="font-medium text-sm text-[#263138]">Kristin Watson</p>
+            <p className="font-medium text-sm text-[#263138]">{engineerName}</p>
             <p className="text-xs text-gray-500">Service Engineer</p>
           </div>
 

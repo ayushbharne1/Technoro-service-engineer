@@ -2,6 +2,7 @@ import logo from "../../../assets/Technoro.png";
 import { sidebarItems } from "../../../utils/constant";
 import { NavLink, useNavigate } from "react-router-dom";
 import { IoClose } from "react-icons/io5";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 const Sidebar = ({ toggleSidebar }) => {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ const Sidebar = ({ toggleSidebar }) => {
   return (
     <div className="flex flex-col h-screen bg-white shadow-lg border-r-2 border-gray-400 w-[270px] flex-shrink-0 overflow-y-auto hide-scrollbar">
       <div className="ml-2 border-b-2 border-gray-400 flex justify-between items-center pr-4">
-        <img className="w-[136px] h-[72px] object-cover" src={logo} alt="logo" />
+        <img className="w-[130px] h-[70px] object-cover" src={logo} alt="logo" />
         
         {/* Fixed: Icon is now INSIDE the button */}
         <button 
@@ -51,3 +52,7 @@ const Sidebar = ({ toggleSidebar }) => {
 };
 
 export default Sidebar;
+
+
+
+

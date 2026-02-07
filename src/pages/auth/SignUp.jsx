@@ -157,8 +157,11 @@ const SignUp = () => {
     setIsSubmitting(true); // Start local loading
     try {
       await dispatch(registerEngineer(payload)).unwrap();
-      alert("Registration successful!");
-      navigate("/login");
+      // alert("Registration successful!");
+       toast.success("OTP sent successfully: ",{
+        autoClose: 1500,
+      });
+      navigate("/");
     } catch (err) {
       console.error("Registration failed", err);
     } finally {
@@ -616,7 +619,7 @@ const SignUp = () => {
             <span>Already have an account?</span>
             <a
               className="text-[#7EC1B1] font-bold hover:underline pl-2"
-              href="/login"
+              href="/"
             >
               Login
             </a>

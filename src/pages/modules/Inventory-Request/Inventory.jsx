@@ -21,6 +21,7 @@ import DashboardIcon from "../../../assets/Dashboard_icon.png";
 import NewRequestModal from "./NewRequestModal";
 import { ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom"; // Add this line
+import Loader from "../../../components/Loader";
 
 const Inventory = () => {
   const dispatch = useDispatch();
@@ -104,10 +105,15 @@ const Inventory = () => {
     }
   };
 
-  if (loading && all.length === 0) return <div className="text-center py-20">Loading...</div>;
-
+if (loading && all.length === 0) {
+    return (
+      <div className="w-full min-h-screen bg-white flex items-center justify-center">
+        <Loader message="Fetching inventory data..." />
+      </div>
+    );
+  }
   return (
-    <div className="w-full min-h-screen rounded-lg bg-gray-100 pt-2 font-poppins">
+    <div className="w-full min-h-screen rounded-lg bg-white pt-2 font-poppins">
       <ToastContainer position="top-right" autoClose={2000} />
       <div className="w-full mx-auto mb-4  rounded-lg border border-gray-100 p-6">
         

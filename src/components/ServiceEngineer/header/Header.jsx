@@ -1,11 +1,20 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+<<<<<<< HEAD
 import { useSelector, useDispatch } from "react-redux"; // Add these imports
 import { LuBell, LuMenu } from "react-icons/lu";
 import { IoIosArrowDown } from "react-icons/io";
 import user from "../../../assets/user.png";
 import { getNotifications } from "../../../services/api";
 import { fetchDashboardData } from "../../../redux/slices/dashboardSlice";
+=======
+import { LuBell, LuMenu } from "react-icons/lu"; 
+import { IoIosArrowDown } from "react-icons/io";
+import user from "../../../assets/user.png";
+import { getNotifications } from "../../../services/api";
+import Swal from "sweetalert2";
+
+>>>>>>> avinash
 const Header = ({ toggleSidebar }) => {
   const [notificationCount, setNotificationCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -13,6 +22,7 @@ const Header = ({ toggleSidebar }) => {
   const dispatch = useDispatch();
   const dropdownRef = useRef(null);
 
+<<<<<<< HEAD
   // Get engineer data from Redux store
   const { data: dashboardData } = useSelector((state) => state.dashboard);
   const engineerName = dashboardData?.engineer?.name || "User";
@@ -23,6 +33,8 @@ const Header = ({ toggleSidebar }) => {
   }, [dispatch]);
 
   // Handle outside click for dropdown
+=======
+>>>>>>> avinash
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -33,7 +45,6 @@ const Header = ({ toggleSidebar }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Fetch unread count from API
   useEffect(() => {
     const fetchNotificationCount = async () => {
       try {
@@ -51,10 +62,27 @@ const Header = ({ toggleSidebar }) => {
     return () => clearInterval(interval);
   }, []);
 
+  // 2. Updated Logout Section with SweetAlert2
   const handleLogout = () => {
-    localStorage.clear();
-    sessionStorage.clear();
-    navigate("/");
+    setIsOpen(false); 
+    
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You will be logged out of the Service Engineer Panel.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#7EC1B1", // Matches your theme color
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, logout!",
+      cancelButtonText: "Cancel",
+      reverseButtons: true // Standard practice for destructive actions
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.clear();
+        sessionStorage.clear();
+        navigate("/");
+      }
+    });
   };
 
   return (
@@ -71,12 +99,17 @@ const Header = ({ toggleSidebar }) => {
         <span className="text-xl">Service Engineer Panel</span>
       </div>
 
-      {/* 2. RIGHT SIDE: Notifications and Profile */}
+      {/* 2. CENTER: Service Engineer Panel */}
+      <div className="flex-1 flex justify-center items-center px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12">
+        <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-[#263138] tracking-tight whitespace-nowrap text-center">
+          Service Engineer Panel
+        </h1>
+      </div>
+
+      {/* 3. RIGHT SIDE: Notifications and Profile */}
       <div className="flex items-center h-full">
-        {/* Left Divider */}
         <span className="border-l-2 border-black h-1/2"></span>
 
-        {/* Notification Bell */}
         <div
           className="relative flex items-center justify-center px-4 cursor-pointer h-full"
           onClick={() => navigate("/notifications")}
@@ -89,10 +122,8 @@ const Header = ({ toggleSidebar }) => {
           )}
         </div>
 
-        {/* Right Divider */}
         <span className="border-l-2 border-black h-1/2"></span>
 
-        {/* User Profile Section */}
         <div className="flex items-center ml-4 h-full relative" ref={dropdownRef}>
           <img
             src={user}
@@ -106,7 +137,6 @@ const Header = ({ toggleSidebar }) => {
             <p className="text-xs text-gray-500">Service Engineer</p>
           </div>
 
-          {/* Dropdown Toggle */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="ml-2 p-1 hover:bg-gray-100 rounded-full transition-colors"
@@ -114,13 +144,15 @@ const Header = ({ toggleSidebar }) => {
             <IoIosArrowDown className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
           </button>
 
-          {/* Dropdown Menu */}
           {isOpen && (
             <div className="absolute right-0 top-[60px] w-40 bg-white border border-gray-300 rounded-md shadow-xl z-50 overflow-hidden">
               <ul className="text-gray-700">
                 <li 
                   className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                  onClick={() => navigate("/profile")}
+                  onClick={() => {
+                    setIsOpen(false);
+                    navigate("/profile");
+                  }}
                 >
                   My Profile
                 </li>

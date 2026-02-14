@@ -5,6 +5,7 @@ import { GoEye } from "react-icons/go";
 import { FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import Header2 from "../../../components/ServiceEngineer/header/Header2";
+import Loader from "../../../components/Loader";
 
 const OngoingLeads = () => {
   const navigate = useNavigate();
@@ -43,11 +44,17 @@ const OngoingLeads = () => {
     return isOngoing && matchesSearch;
   });
 
-  if (loading) return <p className="text-center py-10 font-poppins">Loading ongoing leads...</p>;
-  if (error) return <p className="text-center text-red-500 py-10 font-poppins">{error}</p>;
+if (loading) {
+    return (
+      <div className="min-h-screen bg-white rounded-lg p-6 flex items-center justify-center">
+        <Loader message="Loading ongoing tasks..." />
+      </div>
+    );
+  }
+    if (error) return <p className="text-center text-red-500 py-10 font-poppins">{error}</p>;
 
   return (
-    <div className="min-h-screen bg-gray-100 rounded-lg p-6 font-poppins">
+    <div className="min-h-screen bg-white rounded-lg p-6 font-poppins">
       <Header2 title="Ongoing Leads" />
 
       {/* Controls Bar */}

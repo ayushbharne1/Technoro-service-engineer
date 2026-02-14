@@ -255,7 +255,7 @@ const Messages = () => {
   };
 
   return (
-    <div className="bg-gray-100 rounded-lg p-6 h-full overflow-y-auto flex flex-col gap-6 font-poppins">
+    <div className="bg-white rounded-lg p-6 h-full overflow-y-auto flex flex-col gap-6 font-poppins">
       <Header2 title="Messages" />
 
 

@@ -6,6 +6,7 @@ import IncomeSummary from "./IncomeSummary";
 import TodaysTasks from "./TodaysTasks";
 import NewLeadsTable from "./NewLeadsTable";
 import Header2 from "../../../components/ServiceEngineer/header/Header2";
+import Loader from "../../../components/Loader";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -15,10 +16,18 @@ const Dashboard = () => {
     dispatch(fetchDashboardData());
   }, [dispatch]);
 
+  // if (loading && !dashboardData) {
+  //   return (
+  //     <div className="flex justify-center items-center min-h-screen">
+  //       <div className="text-lg">Loading...</div>
+  //     </div>
+  //   );
+  // }
+
   if (loading && !dashboardData) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-lg">Loading...</div>
+        <Loader message="Fetching your dashboard stats..." />
       </div>
     );
   }
@@ -49,7 +58,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="flex flex-col rounded-lg bg-gray-100 p-4 sm:p-6 gap-y-6 sm:gap-y-8 min-h-screen font-sans text-base">
+    <div className="flex flex-col rounded-lg bg-white p-4 sm:p-6 gap-y-6 sm:gap-y-8 min-h-screen font-sans text-base">
       <Header2 title="Dashboard" />
       <StatsCards data={dashboardData} />
 

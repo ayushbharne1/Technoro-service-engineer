@@ -67,7 +67,7 @@ const OngoingView = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen rounded-lg flex flex-col p-6 gap-6 font-poppins">
+    <div className="bg-white min-h-screen rounded-lg flex flex-col p-6 gap-6 font-poppins">
       <Header2 />
 
       <div className="bg-white p-6 rounded-xl shadow-sm flex flex-col gap-6">

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts, setProductFilters } from "../../../redux/slices/productSlice";
 import Header2 from "../../../components/ServiceEngineer/header/Header2";
+import Loader from "../../../components/Loader";
 
 const Product = () => {
   const navigate = useNavigate();
@@ -34,13 +35,13 @@ const Product = () => {
   };
 
   return (
-    <div className="bg-gray-100 p-6 rounded-lg sm:p-8 font-sans min-h-screen">
+    <div className="bg-white p-6 rounded-lg sm:p-8 font-sans min-h-screen">
       <div className="max-w-full mx-auto">
         <Header2 />
 
         {/* Categories Tab Bar */}
         <div className="mb-6">
-          <div className="flex w-1/2 bg-[#F5F5F5] items-center space-x-1 p-2 rounded-[20px] overflow-x-auto mb-4">
+          <div className="flex w-1/2 bg-[#FFFF] items-center space-x-1 p-2 rounded-[20px] overflow-x-auto mb-4">
             {categories.map((cat, idx) => (
               <button
                 key={idx}
@@ -75,11 +76,11 @@ const Product = () => {
 
         {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {loading ? (
-            Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-white p-4 rounded-lg shadow-md h-80 animate-pulse border" />
-            ))
-          ) : (
+        {loading ? (
+          <div className="flex items-center justify-center ml-80 min-h-[400px] w-full">
+            <Loader message="Browsing catalog..." />
+          </div>
+        ) : (
             productList.map((product) => (
               <div key={product.id} className="bg-white p-4 rounded-lg shadow-md transition-transform h-full flex flex-col hover:shadow-lg border border-gray-100">
                 <div className="bg-white rounded-md p-4 flex items-center justify-center w-full h-40 mb-4">

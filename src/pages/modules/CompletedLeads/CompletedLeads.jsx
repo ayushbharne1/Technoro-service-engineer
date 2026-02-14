@@ -5,6 +5,8 @@ import Header2 from "../../../components/ServiceEngineer/header/Header2";
 import { GoEye } from "react-icons/go";
 import { FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../../components/Loader";
+
 
 const CompletedLeads = () => {
     const dispatch = useDispatch();
@@ -54,11 +56,16 @@ const CompletedLeads = () => {
         if (newPage > 0 && newPage <= totalPages) setCurrentPage(newPage);
     };
 
-    if (loading) return <div className="p-10 text-center font-poppins">Loading completed leads...</div>;
-    if (error) return <div className="p-10 text-center text-red-500">{error}</div>;
+if (loading) {
+        return (
+            <div className="bg-white p-6 h-full rounded-lg flex items-center justify-center">
+                <Loader message="Fetching historical records..." />
+            </div>
+        );
+    }    if (error) return <div className="p-10 text-center text-red-500">{error}</div>;
 
     return (
-        <div className="bg-gray-100 p-6 h-full rounded-lg overflow-y-auto flex flex-col gap-6 font-poppins">
+        <div className="bg-white p-6 h-full rounded-lg overflow-y-auto flex flex-col gap-6 font-poppins">
             <Header2 title="Lead Management" />
 
             <div className="bg-white p-3 sm:p-6 rounded-lg shadow flex flex-col gap-6">

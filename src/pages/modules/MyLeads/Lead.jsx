@@ -5,6 +5,7 @@ import Header2 from "../../../components/ServiceEngineer/header/Header2";
 import { GoEye } from "react-icons/go";
 import { FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../../components/Loader";
 
 const LeadManagement = () => {
   const dispatch = useDispatch();
@@ -43,11 +44,16 @@ const LeadManagement = () => {
     }
   };
 
-  if (loading) return <div className="p-10 text-center font-bold">Loading Leads...</div>;
-  if (error) return <div className="p-10 text-center text-red-500 font-bold">Error: {error}</div>;
+if (loading) {
+    return (
+      <div className="bg-white p-6 h-full rounded-lg flex items-center justify-center min-h-[400px]">
+        <Loader message="Loading lead database..." />
+      </div>
+    );
+  }  if (error) return <div className="p-10 text-center text-red-500 font-bold">Error: {error}</div>;
 
   return (
-    <div className="bg-gray-100 p-6 h-full rounded-lg flex flex-col gap-6 font-[Poppins]">
+    <div className="bg-white p-6 h-full rounded-lg flex flex-col gap-6 font-[Poppins]">
       <Header2 title="Lead Management" />
 
       <div className="bg-white p-4 sm:p-6 rounded-lg shadow flex flex-col gap-6">

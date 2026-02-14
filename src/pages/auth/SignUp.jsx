@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { ImSpinner2 } from "react-icons/im"; // Loading Icon
+import { ImSpinner2 } from "react-icons/im";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
@@ -73,7 +73,7 @@ const SignUp = () => {
       setPincodeLoading(true);
       try {
         const response = await fetch(
-          `https://api.postalpincode.in/pincode/${numericValue}`,
+          `https://api.postalpincode.in/pincode/${numericValue}`
         );
         const data = await response.json();
         if (data[0].Status === "Success") {
@@ -122,7 +122,7 @@ const SignUp = () => {
   const handleVerifyOTP = async () => {
     setIsOtpLoading(true);
     const result = await dispatch(
-      verifyEngineerOtp({ phone: formData.mobileNumber, otp: formData.otp }),
+      verifyEngineerOtp({ phone: formData.mobileNumber, otp: formData.otp })
     );
     setIsOtpLoading(false);
 
@@ -154,15 +154,20 @@ const SignUp = () => {
       },
     };
 
-    setIsSubmitting(true); // Start local loading
+    setIsSubmitting(true);
     try {
       await dispatch(registerEngineer(payload)).unwrap();
-      alert("Registration successful!");
-      navigate("/login");
+      toast.success("Registration successful! Redirecting...",{
+        autoClose: 20000,
+      });
+      setTimeout(() => {
+      navigate("/"); // Direct redirect to home/login
+      }, 2100); // 2-second delay before redirect
     } catch (err) {
+      toast.error("Registration failed. Please try again.");
       console.error("Registration failed", err);
     } finally {
-      setIsSubmitting(false); // Stop local loading
+      setIsSubmitting(false);
     }
   };
 
@@ -197,12 +202,10 @@ const SignUp = () => {
     setLocalErrors({});
   };
 
-  // --- Render Functions (Using your requested style) ---
+  // --- Render Functions ---
 
   const renderProgressBar = () => (
     <div className="w-full max-w-2xl mb-8">
-
-      {/* toast to show the otp */}
       <ToastContainer
         position="top-right"
         hideProgressBar={false}
@@ -225,12 +228,12 @@ const SignUp = () => {
               {s === 1
                 ? "Identity"
                 : s === 2
-                  ? "Skills"
-                  : s === 3
-                    ? "Location"
-                    : s === 4
-                      ? "KYC"
-                      : "Payment"}
+                ? "Skills"
+                : s === 3
+                ? "Location"
+                : s === 4
+                ? "KYC"
+                : "Payment"}
             </span>
           </div>
         ))}
@@ -246,9 +249,7 @@ const SignUp = () => {
 
   const renderStep1 = () => (
     <div className="w-full max-w-2xl space-y-5">
-      <h3 className="text-xl md:text-2xl font-semibold mb-4">
-        Identity & Login
-      </h3>
+      <h3 className="text-xl md:text-2xl font-semibold mb-4">Identity & Login</h3>
 
       <div className="flex flex-col gap-2">
         <label className="text-base md:text-lg">Full Name</label>
@@ -276,7 +277,7 @@ const SignUp = () => {
             onChange={(e) =>
               handleInputChange(
                 "mobileNumber",
-                e.target.value.replace(/\D/g, ""),
+                e.target.value.replace(/\D/g, "")
               )
             }
             disabled={otpVerified}
@@ -369,16 +370,18 @@ const SignUp = () => {
 
   const renderStep2 = () => (
     <div className="w-full max-w-2xl space-y-5">
-      <h3 className="text-xl md:text-2xl font-semibold mb-4">
-        Work Capability
-      </h3>
+      <h3 className="text-xl md:text-2xl font-semibold mb-4">Work Capability</h3>
       <div className="flex flex-col gap-2">
         <label className="text-base md:text-lg">Service Type</label>
         <div className="space-y-3">
           {["Installation", "Repair", "Maintenance"].map((service) => (
             <label
               key={service}
-              className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 ${formData.serviceType.includes(service) ? "border-[#7EC1B1] bg-teal-50" : "border-gray-300"}`}
+              className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 ${
+                formData.serviceType.includes(service)
+                  ? "border-[#7EC1B1] bg-teal-50"
+                  : "border-gray-300"
+              }`}
             >
               <input
                 type="checkbox"
@@ -407,9 +410,7 @@ const SignUp = () => {
 
   const renderStep3 = () => (
     <div className="w-full max-w-2xl space-y-5">
-      <h3 className="text-xl md:text-2xl font-semibold mb-4">
-        Location Details
-      </h3>
+      <h3 className="text-xl md:text-2xl font-semibold mb-4">Location Details</h3>
       <div className="flex flex-col gap-2">
         <label className="text-base md:text-lg">Pincode</label>
         <div className="relative">
@@ -464,9 +465,7 @@ const SignUp = () => {
 
   const renderStep4 = () => (
     <div className="w-full max-w-2xl space-y-5">
-      <h3 className="text-xl md:text-2xl font-semibold mb-4">
-        KYC Verification
-      </h3>
+      <h3 className="text-xl md:text-2xl font-semibold mb-4">KYC Verification</h3>
       <div className="flex flex-col gap-2">
         <label className="text-base md:text-lg">Aadhaar Number</label>
         <input
@@ -478,7 +477,7 @@ const SignUp = () => {
           onChange={(e) =>
             handleInputChange(
               "aadhaarNumber",
-              e.target.value.replace(/\D/g, ""),
+              e.target.value.replace(/\D/g, "")
             )
           }
         />
@@ -501,9 +500,7 @@ const SignUp = () => {
 
   const renderStep5 = () => (
     <div className="w-full max-w-2xl space-y-5">
-      <h3 className="text-xl md:text-2xl font-semibold mb-4">
-        Payment Details
-      </h3>
+      <h3 className="text-xl md:text-2xl font-semibold mb-4">Payment Details</h3>
       <div className="flex flex-col gap-2">
         <label className="text-base md:text-lg">Bank Account Number</label>
         <input
@@ -514,7 +511,7 @@ const SignUp = () => {
           onChange={(e) =>
             handleInputChange(
               "bankAccountNumber",
-              e.target.value.replace(/\D/g, ""),
+              e.target.value.replace(/\D/g, "")
             )
           }
         />
@@ -602,13 +599,19 @@ const SignUp = () => {
             )}
             <button
               onClick={handleNext}
-              disabled={step === 5 && isSubmitting}
-              className="flex-1 h-12 md:h-14 bg-[#7EC1B1] text-white rounded-lg font-semibold hover:bg-[#68a998] flex items-center justify-center gap-2"
+              disabled={isSubmitting}
+              className="flex-1 h-12 md:h-14 bg-[#7EC1B1] text-white rounded-lg font-semibold hover:bg-[#68a998] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {step === 5 && isSubmitting && (
-                <ImSpinner2 className="animate-spin" />
+              {isSubmitting ? (
+                <>
+                  <ImSpinner2 className="animate-spin" />
+                  <span>Completing...</span>
+                </>
+              ) : step === 5 ? (
+                "Complete Registration"
+              ) : (
+                "Next"
               )}
-              {step === 5 ? "Complete Registration" : "Next"}
             </button>
           </div>
 

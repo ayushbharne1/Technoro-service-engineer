@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductById, clearSelectedProduct } from "../../../redux/slices/productSlice";
 import Header2 from "../../../components/ServiceEngineer/header/Header2";
-
+import Loader from "../../../components/Loader";
 const ViewProduct = () => {
   const { productId } = useParams();
   const location = useLocation();
@@ -38,8 +38,12 @@ const ViewProduct = () => {
       {/* Main Content */}
       <div className="mt-4">
         {loading ? (
-          <div className="text-center mt-10">
-            <p className="text-gray-600 text-lg font-medium animate-pulse">Loading product details...</p>
+          /* 2. Replace the old pulse text with your custom Loader */
+          <div className="mt-20">
+            <Loader 
+              message="Fetching product details..." 
+              size={250} 
+            />
           </div>
         ) : error ? (
           <div className="bg-white rounded-xl shadow-md p-8 text-center max-w-2xl mx-auto">
